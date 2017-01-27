@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import {Http} from "@angular/http";
-
-const PEOPLE_API_URL = 'http://swapi.co/api/people';
+import {Component, OnInit} from '@angular/core';
+import "rxjs";
+import {SwapiService} from "./core/swapi.service";
 
 @Component({
   selector: 'app-root',
@@ -9,16 +8,18 @@ const PEOPLE_API_URL = 'http://swapi.co/api/people';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'app works!';
+  title: string = 'app works!';
+  people: any[] = [];
 
-  constructor(private http:Http) {
+  constructor(private swapiService:SwapiService) {
 
   }
 
   ngOnInit() {
-    this.http.get(PEOPLE_API_URL).$promise
-      .then((response) =>  {
+    // this.http.get(PEOPLE_API_URL).subscribe(this.getElements);
+    const observable = this.swapiService.getPeople();
 
-      });
+    observable.subscribe((results) => this.people = results);
+    observable.subscribe(() => console.log('People has changed', this.people));
   }
 }
